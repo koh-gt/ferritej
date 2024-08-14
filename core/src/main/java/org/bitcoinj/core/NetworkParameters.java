@@ -50,7 +50,7 @@ public abstract class NetworkParameters {
      * The alert signing key originally owned by Satoshi, and now passed on to Gavin along with a few others.
      */
     public static final byte[] SATOSHI_KEY = Utils.HEX.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
-
+    // Alert: removed from Bitcoin Core since March 2016 - 1AGRxqDa5WjUKBwHB9XYEjmkv1ucoUUy1s
     /** The string returned by getId() for the main, production network where people trade things. */
     public static final String ID_MAINNET = "org.bitcoin.production";
     /** The string returned by getId() for the testnet. */
@@ -524,10 +524,10 @@ public abstract class NetworkParameters {
     public abstract int getProtocolVersionNum(final ProtocolVersion version);
 
     public static enum ProtocolVersion {
-        MINIMUM(70000),
+        MINIMUM(30000),   // Minimum v3 after Ferrite DGWv3 DAA fork 
         PONG(60001),
         BLOOM_FILTER(70000),
-        CURRENT(70001);
+        CURRENT(30104);   // Latest is v3.1.4 as of 20240815 
 
         private final int bitcoinProtocol;
 

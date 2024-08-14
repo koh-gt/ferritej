@@ -55,6 +55,11 @@ public class TestNet3Params extends AbstractBitcoinNetParams {
         spendableCoinbaseDepth = 100;
         subsidyDecreaseBlockCount = 301107;
 
+	powDGWHeight = 26;
+        powKGWHeight = 26;
+        powAllowMinimumDifficulty = true;
+        powNoRetargeting = false;
+
 	genesisBlock.setMerkleRoot(Sha256Hash.wrap("3db2b5aa928b56b8f38dc404f5bdb9e76209906b91ba175361acdc2405b19592"));
 
         String genesisHash = genesisBlock.getHashAsString();

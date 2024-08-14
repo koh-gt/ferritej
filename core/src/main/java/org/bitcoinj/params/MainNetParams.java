@@ -57,6 +57,11 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         subsidyDecreaseBlockCount = 301107;
         spendableCoinbaseDepth = 100;
 
+	powDGWHeight = 250000;
+        powKGWHeight = 250000;
+        powAllowMinimumDifficulty = false;
+        powNoRetargeting = false;
+
 	genesisBlock.setMerkleRoot(Sha256Hash.wrap("3db2b5aa928b56b8f38dc404f5bdb9e76209906b91ba175361acdc2405b19592"));
 
         String genesisHash = genesisBlock.getHashAsString();

@@ -103,6 +103,7 @@ public class Block extends Message {
 
     /** Stores the hash of the block. If null, getHash() will recalculate it. */
     private Sha256Hash hash;
+    private Sha256Hash powHash;
 
     protected boolean headerBytesValid;
     protected boolean transactionBytesValid;
@@ -384,6 +385,7 @@ public class Block extends Message {
         if (!transactionBytesValid)
             payload = null;
         hash = null;
+	powHash = null;
     }
 
     private void unCacheTransactions() {
@@ -413,6 +415,20 @@ public class Block extends Message {
     }
 
     /**
+     * Calculates the block POW hash by serializing the block and hashing the
+     * resulting bytes.
+     */
+    private Sha256Hash calculatePowHash() {
+        try {
+            ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(HEADER_SIZE);
+            writeHeader(bos);
+            return Sha256Hash.wrapReversed(Sha256Hash.hashScrypt(bos.toByteArray()));
+        } catch (IOException e) {
+            throw new RuntimeException(e); // Cannot happen.
+        }
+    }
+
+    /**
      * Returns the hash of the block (which for a valid, solved block should be below the target) in the form seen on
      * the block explorer. If you call this on block 1 in the mainnet chain
      * you will get "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048".
@@ -430,6 +446,16 @@ public class Block extends Message {
         if (hash == null)
             hash = calculateHash();
         return hash;
+    }
+
+    /**
+     * Returns the POW hash of the block (which for a valid, solved block should be
+     * below the target). Big endian.
+     */
+    public Sha256Hash getPowHash() {
+        if (powHash == null)
+            powHash = calculatePowHash();
+        return powHash;
     }
 
     /**
@@ -468,6 +494,7 @@ public class Block extends Message {
         block.difficultyTarget = difficultyTarget;
         block.transactions = null;
         block.hash = getHash();
+        block.powHash = getPowHash();
     }
 
     /**
@@ -544,7 +571,7 @@ public class Block extends Message {
         // field is of the right value. This requires us to have the preceeding blocks.
         BigInteger target = getDifficultyTargetAsInteger();
 
-        BigInteger h = getHash().toBigInteger();
+        BigInteger h = getPowHash().toBigInteger();
         if (h.compareTo(target) > 0) {
             // Proof of work check failed!
             if (throwException)
@@ -748,6 +775,7 @@ public class Block extends Message {
         unCacheHeader();
         merkleRoot = value;
         hash = null;
+        powHash = null;
     }
 
     /** Adds a transaction to this block. The nonce and merkle root are invalid after this. */
@@ -771,6 +799,7 @@ public class Block extends Message {
         // Force a recalculation next time the values are needed.
         merkleRoot = null;
         hash = null;
+        powHash = null;
     }
 
     /** Returns the version of the block data structure as defined by the Bitcoin protocol. */
@@ -789,6 +818,7 @@ public class Block extends Message {
         unCacheHeader();
         this.prevBlockHash = prevBlockHash;
         this.hash = null;
+        this.powHash = null;
     }
 
     /**
@@ -810,6 +840,7 @@ public class Block extends Message {
         unCacheHeader();
         this.time = time;
         this.hash = null;
+        this.powHash = null;
     }
 
     /**
@@ -830,6 +861,7 @@ public class Block extends Message {
         unCacheHeader();
         this.difficultyTarget = compactForm;
         this.hash = null;
+        this.powHash = null;
     }
 
     /**
@@ -845,6 +877,7 @@ public class Block extends Message {
         unCacheHeader();
         this.nonce = nonce;
         this.hash = null;
+        this.powHash = null;
     }
 
     /** Returns an immutable list of transactions held in this block, or null if this object represents just a header. */

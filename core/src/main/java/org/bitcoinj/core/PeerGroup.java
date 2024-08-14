@@ -437,7 +437,7 @@ public class PeerGroup implements TransactionBroadcaster {
         peerDiscoverers = new CopyOnWriteArraySet<PeerDiscovery>();
         runningBroadcasts = Collections.synchronizedSet(new HashSet<TransactionBroadcast>());
         bloomFilterMerger = new FilterMerger(DEFAULT_BLOOM_FILTER_FP_RATE);
-        vMinRequiredProtocolVersion = params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.BLOOM_FILTER);
+        vMinRequiredProtocolVersion = isBloomFilteringEnabled() ? params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.BLOOM_FILTER) : params.getProtocolVersionNum(NetworkParameters.ProtocolVersion.MINIMUM);
     }
 
     private CountDownLatch executorStartupLatch = new CountDownLatch(1);

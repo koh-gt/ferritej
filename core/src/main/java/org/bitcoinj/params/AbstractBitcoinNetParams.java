@@ -18,6 +18,8 @@
 package org.bitcoinj.params;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.bitcoinj.core.Block;
@@ -37,6 +39,8 @@ import com.google.common.base.Stopwatch;
 
 import org.bitcoinj.core.BitcoinSerializer;
 
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * Parameters for Bitcoin-like networks.
  */
@@ -47,6 +51,11 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
     public static final String BITCOIN_SCHEME = "ferrite";
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBitcoinNetParams.class);
+
+
+    protected int powDGWHeight;
+    protected boolean powAllowMinimumDifficulty;
+    protected boolean powNoRetargeting;
 
     public AbstractBitcoinNetParams() {
         super();
@@ -61,8 +70,24 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
         return ((storedPrev.getHeight() + 1) % this.getInterval()) == 0;
     }
 
+    protected boolean isDifficultyTransitionPoint(int height) {
+        return height >= powDGWHeight ? true :
+                ((height + 1) % this.getInterval()) == 0;
+    }
+
+    // DAA selector function
     @Override
     public void checkDifficultyTransitions(final StoredBlock storedPrev, final Block nextBlock,
+                                           final BlockStore blockStore) throws VerificationException, BlockStoreException {
+        int height = storedPrev.getHeight() + 1;
+        if(height >= powDGWHeight) {
+            DarkGravityWave(storedPrev, nextBlock, blockStore);
+        } else {
+            checkDifficultyTransitions_btc(storedPrev, nextBlock, blockStore);
+        }
+    }
+
+    public void checkDifficultyTransitions_btc(final StoredBlock storedPrev, final Block nextBlock,
     	final BlockStore blockStore) throws VerificationException, BlockStoreException {
         Block prev = storedPrev.getHeader();
 
@@ -122,6 +147,94 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
         if (newTargetCompact != receivedTargetCompact)
             throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
                     Long.toHexString(newTargetCompact) + " vs " + Long.toHexString(receivedTargetCompact));
+    }
+
+    protected long calculateNextDifficulty(StoredBlock storedBlock, Block nextBlock, BigInteger newTarget) {
+        if (newTarget.compareTo(this.getMaxTarget()) > 0) {
+            newTarget = this.getMaxTarget();
+        }
+
+        int accuracyBytes = (int) (nextBlock.getDifficultyTarget() >>> 24) - 3;
+
+        // The calculated difficulty is to a higher precision than received, so reduce here.
+        BigInteger mask = BigInteger.valueOf(0xFFFFFFL).shiftLeft(accuracyBytes * 8);
+        newTarget = newTarget.and(mask);
+        return Utils.encodeCompactBits(newTarget);
+    }
+
+    protected void verifyDifficulty(StoredBlock storedPrev, Block nextBlock, BigInteger newTarget) throws VerificationException {
+        long newTargetCompact = calculateNextDifficulty(storedPrev, nextBlock, newTarget);
+        long receivedTargetCompact = nextBlock.getDifficultyTarget();
+
+        if (newTargetCompact != receivedTargetCompact)
+            throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+                    Long.toHexString(newTargetCompact) + " vs " + Long.toHexString(receivedTargetCompact));
+    }
+
+    public void DarkGravityWave(StoredBlock storedPrev, Block nextBlock,
+                                  final BlockStore blockStore) throws VerificationException {
+        /* current difficulty formula, darkcoin - DarkGravity v3, written by Evan Duffield - evan@darkcoin.io */
+        long pastBlocks = 24;
+
+        if (storedPrev == null || storedPrev.getHeight() == 0 || storedPrev.getHeight() < pastBlocks) {
+            verifyDifficulty(storedPrev, nextBlock, getMaxTarget());
+            return;
+        }
+
+        if(powAllowMinimumDifficulty)
+        {
+            // recent block is more than 2 hours old
+            if (nextBlock.getTimeSeconds() > storedPrev.getHeader().getTimeSeconds() + 2 * 60 * 60) {
+                verifyDifficulty(storedPrev, nextBlock, getMaxTarget());
+                return;
+            }
+            // recent block is more than 10 minutes old
+            if (nextBlock.getTimeSeconds() > storedPrev.getHeader().getTimeSeconds() + NetworkParameters.TARGET_SPACING*4) {
+                BigInteger newTarget = storedPrev.getHeader().getDifficultyTargetAsInteger().multiply(BigInteger.valueOf(10));
+                verifyDifficulty(storedPrev, nextBlock, newTarget);
+                return;
+            }
+        }
+
+        StoredBlock cursor = storedPrev;
+        BigInteger pastTargetAverage = BigInteger.ZERO;
+        for(int countBlocks = 1; countBlocks <= pastBlocks; countBlocks++) {
+            BigInteger target = cursor.getHeader().getDifficultyTargetAsInteger();
+            if(countBlocks == 1) {
+                pastTargetAverage = target;
+            } else {
+                pastTargetAverage = pastTargetAverage.multiply(BigInteger.valueOf(countBlocks)).add(target).divide(BigInteger.valueOf(countBlocks+1));
+            }
+            if(countBlocks != pastBlocks) {
+                try {
+                    cursor = cursor.getPrev(blockStore);
+                    if(cursor == null) {
+                        //when using checkpoints, the previous block will not exist until 24 blocks are in the store.
+                        return;
+                    }
+                } catch (BlockStoreException x) {
+                    //when using checkpoints, the previous block will not exist until 24 blocks are in the store.
+                    return;
+                }
+            }
+        }
+
+
+        BigInteger newTarget = pastTargetAverage;
+
+        long timespan = storedPrev.getHeader().getTimeSeconds() - cursor.getHeader().getTimeSeconds();
+        long targetTimespan = pastBlocks*TARGET_SPACING;
+
+        if (timespan < targetTimespan/3)
+            timespan = targetTimespan/3;
+        if (timespan > targetTimespan*3)
+            timespan = targetTimespan*3;
+
+        // Retarget
+        newTarget = newTarget.multiply(BigInteger.valueOf(timespan));
+        newTarget = newTarget.divide(BigInteger.valueOf(targetTimespan));
+        verifyDifficulty(storedPrev, nextBlock, newTarget);
+
     }
 
     @Override
