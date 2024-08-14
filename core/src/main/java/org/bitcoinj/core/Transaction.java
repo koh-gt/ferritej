@@ -91,26 +91,26 @@ public class Transaction extends ChildMessage {
     /** Same but as a BigInteger for CHECKLOCKTIMEVERIFY */
     public static final BigInteger LOCKTIME_THRESHOLD_BIG = BigInteger.valueOf(LOCKTIME_THRESHOLD);
 
-    /** How many bytes a transaction can be before it won't be relayed anymore. Currently 100kb. */
-    public static final int MAX_STANDARD_TX_SIZE = 100000;
+    /** How many bytes a transaction can be before it won't be relayed anymore. Currently 1mb. */
+    public static final int MAX_STANDARD_TX_SIZE = 1000000;
 
     /**
      * If feePerKb is lower than this, Bitcoin Core will treat it as if there were no fee.
      */
-    public static final Coin REFERENCE_DEFAULT_MIN_TX_FEE = Coin.valueOf(5000); // 0.05 mBTC
+    public static final Coin REFERENCE_DEFAULT_MIN_TX_FEE = Coin.valueOf(2000); // 0.02 mFEC
 
     /**
      * If using this feePerKb, transactions will get confirmed within the next couple of blocks.
      * This should be adjusted from time to time. Last adjustment: March 2016.
      */
-    public static final Coin DEFAULT_TX_FEE = Coin.valueOf(50000); // 0.5 mBTC
+    public static final Coin DEFAULT_TX_FEE = Coin.valueOf(10000); // 0.1 mFEC
 
     /**
      * Any standard (ie pay-to-address) output smaller than this value (in satoshis) will most likely be rejected by the network.
      * This is calculated by assuming a standard output will be 34 bytes, and then using the formula used in
      * {@link TransactionOutput#getMinNonDustValue(Coin)}.
      */
-    public static final Coin MIN_NONDUST_OUTPUT = Coin.valueOf(2730); // satoshis
+    public static final Coin MIN_NONDUST_OUTPUT = Coin.valueOf(1000); // originally 2730 atoms
 
     // These are bitcoin serialized.
     private long version;

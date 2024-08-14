@@ -6,7 +6,7 @@ var bcj = org.bitcoinj;
 var params = bcj.params.TestNet3Params.get();
 
 // Address where we'll send received coins (minus the miner fee)
-var FORWARD_TO = "mfZCyhQUQXy2S91hnGepdaJxfaNjMg15AV";  // faucet.xeno-genesis.com
+var FORWARD_TO = "FaucetMDrmwzBXnqQj8hPnfSLjBoZCCXhp";  // faucet.ferritecoin.com
 
 // Make logging more compact.
 bcj.utils.BriefLogFormatter.init();
@@ -22,9 +22,9 @@ kit.awaitRunning()
 
 var wallet = kit.wallet();
 var myAddr = wallet.currentReceiveAddress()
-var uri = "bitcoin:" + myAddr;
+var uri = "ferrite:" + myAddr;
 print("Send coins to: " + myAddr);
-print("QRcode: http://qrickit.com/api/qr?d=" + uri);
+print("QRcode: https://ferritecoin.org:53443/qr/" + myAddr);
 
 wallet.allowSpendingUnconfirmedTransactions()
 

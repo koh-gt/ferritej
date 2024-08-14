@@ -77,9 +77,9 @@ import java.util.regex.Pattern;
  *
  * <blockquote><pre>
  * BtcFormat f = BtcFormat.getInstance();
- * String c = f.format(Coin.COIN);                <strong>// "BTC 1.00"</strong>
- * String k = f.format(Coin.COIN.multiply(1000)); <strong>// "BTC 1,000.00"</strong>
- * String m = f.format(Coin.COIN.divide(1000));   <strong>// "mBTC 1.00"</strong>
+ * String c = f.format(Coin.COIN);                <strong>// "FEC 1.00"</strong>
+ * String k = f.format(Coin.COIN.multiply(1000)); <strong>// "FEC 1,000.00"</strong>
+ * String m = f.format(Coin.COIN.divide(1000));   <strong>// "mFEC 1.00"</strong>
  * Coin all = f.parseObject("M฿ 21");             <strong>// All the money in the world</strong>
  * </pre></blockquote>
  *
@@ -97,15 +97,15 @@ import java.util.regex.Pattern;
  * values of {@link BtcAutoFormat.Style}.  There are two styles constants: {@link
  * BtcAutoFormat.Style#CODE} (the default), and {@link BtcAutoFormat.Style#SYMBOL}.  The
  * difference is that the <code>CODE</code> style uses an internationally-distinct currency
- * code, such as <code>"BTC"</code>, to indicate the units of denomination, while the
+ * code, such as <code>"FEC"</code>, to indicate the units of denomination, while the
  * <code>SYMBOL</code> style uses a possibly-ambiguous currency symbol such as
  * <code>"฿"</code>.
  *
- * <p>The denomination used when formatting will be either bitcoin, millicoin
- * or microcoin, depending on the value being represented, chosen so as to minimize the number
+ * <p>The denomination used when formatting will be either ferritecoin, milliferrite
+ * or microferrite, depending on the value being represented, chosen so as to minimize the number
  * of consecutive zeros displayed without losing precision.  For example, depending on the
- * locale, a value of one bitcoin might be formatted as <pre>฿1.00</pre> where a value
- * exceeding that by one satoshi would be <pre>µ฿1,000,000.01</pre>
+ * locale, a value of one ferritecoin might be formatted as <pre>฿1.00</pre> where a value
+ * exceeding that by one atom would be <pre>µ฿1,000,000.01</pre>
  *
  * <h5>Fixed Denomination</h5>
  * 
@@ -114,9 +114,9 @@ import java.util.regex.Pattern;
  * defined by its scale, which is the number of places one must shift the decimal point in
  * increasing precision to convert the representation of a given quantity of bitcoins into a
  * representation of the same value denominated in the formatter's units.  For example, a scale
- * value of <code>3</code> specifies a denomination of millibitcoins, because to represent
- * <code>1.0000 BTC</code>, or one bitcoin, in millibitcoins, one shifts the decimal point
- * three places, that is, to <code>1000.0 mBTC</code>.
+ * value of <code>3</code> specifies a denomination of milliferrites, because to represent
+ * <code>1.00000000 FEC</code>, or one ferritecoin, in milliferrites, one shifts the decimal point
+ * three places, that is, to <code>1000.00000 mFEC</code>.
  *
  * <h3>Construction</h3>
  *
@@ -148,7 +148,7 @@ import java.util.regex.Pattern;
  *
  * <blockquote><pre>
  * BtcFormat f = BtcFormat.getInstance();
- * String s = f.format(Coin.COIN); <strong>// "BTC 1.00"</strong>
+ * String s = f.format(Coin.COIN); <strong>// "FEC 1.00"</strong>
  * </pre></blockquote>
  *
  * <p>The first argument to <code>getInstance()</code> can determine
@@ -157,7 +157,7 @@ import java.util.regex.Pattern;
  * of that <code>int</code> will be interpreted as the decimal-place scale of
  * the {@link BtcFixedFormat} instance that is returned, and thus will
  * determine its denomination.  For example, if you want to format
- * values in units of microbitcoins:
+ * values in units of microferritecoins:
  *
  * <blockquote><pre>BtcFormat m = BtcFormat.getInstance(6);
  *String s = m.format(Coin.COIN); <strong>// "1,000,000.00"</strong>
@@ -196,7 +196,7 @@ import java.util.regex.Pattern;
  * is an optional <code>Locale</code> value.
  *
  * For example, here we construct four instances for the same locale that each format
- * differently the same one-bitcoin value:
+ * differently the same one-ferritecoin value:
  *
  * <blockquote><pre>
  * <strong>// Next line returns "1,00 BTC"</strong>
@@ -264,7 +264,7 @@ import java.util.regex.Pattern;
  * method.  This argument can be either a {@link org.bitcoinj.core.Coin}-type object or a
  * numerical object such as {@link java.lang.Long} or {@link java.math.BigDecimal}.
  * Integer-based types such as {@link java.math.BigInteger} are interpreted as representing a
- * number of satoshis, while a {@link java.math.BigDecimal} is interpreted as representing a
+ * number of atoms, while a {@link java.math.BigDecimal} is interpreted as representing a
  * number of bitcoins.  A value having a fractional amount of satoshis is rounded to the
  * nearest whole satoshi at least, and possibly to a greater unit depending on the number of
  * fractional decimal-places displayed.  The <code>format()</code> method will not accept an
@@ -425,7 +425,7 @@ import java.util.regex.Pattern;
  * parsed <code>String</code>s.
  *
  * <p>When parsing, if the currency-units indicator is absent, then a {@link BtcAutoFormat}
- * instance will infer a denomination of bitcoins while a {@link BtcFixedFormat} will infer the
+ * instance will infer a denomination of ferritecoins while a {@link BtcFixedFormat} will infer the
  * denomination in which it expresses formatted values.  Note: by default (unless overridden by
  * a custom pattern), if the locale or style requires a space to separate the number from the
  * units indicator, that space must be present in the String to be parsed, even if the units
@@ -493,12 +493,12 @@ public abstract class BtcFormat extends Format {
      * comparisons.
      */
 
-    /** The conventional international currency code for bitcoins: "BTC" */
-    private static final String COIN_CODE = "BTC";
+    /** The conventional international currency code for ferritecoins: "FEC" */
+    private static final String COIN_CODE = "FEC";
     /** The default currency symbols for bitcoins */
-    private static final String COIN_SYMBOL = "฿";
+    private static final String COIN_SYMBOL = "F";
     /** An alternative currency symbol to use in locales where the default symbol is used for the national currency. */
-    protected static final String COIN_SYMBOL_ALT = "Ƀ";
+    protected static final String COIN_SYMBOL_ALT = "F";
 
     protected final DecimalFormat numberFormat; // warning: mutable
     protected final int minimumFractionDigits;
@@ -954,7 +954,7 @@ public abstract class BtcFormat extends Format {
 
     /**
      * Return a newly-constructed instance for the given locale that will format
-     * values in terms of bitcoins, with the given minimum number of fractional
+     * values in terms of ferritecoins, with the given minimum number of fractional
      * decimal places.  Optionally, repeating integer arguments can be passed, each
      * indicating the size of an additional group of fractional decimal places to be
      * used as necessary to avoid rounding, to a limiting precision of satoshis.
@@ -1112,7 +1112,7 @@ public abstract class BtcFormat extends Format {
     /***********************/
 
     /**
-     * Formats a bitcoin monetary value and returns an {@link java.text.AttributedCharacterIterator}.
+     * Formats a ferritecoin monetary value and returns an {@link java.text.AttributedCharacterIterator}.
      * By iterating, you can examine what fields apply to each character.  This can be useful
      * since a character may be part of more than one field, for example a grouping separator
      * that is also part of the integer field.
@@ -1131,13 +1131,13 @@ public abstract class BtcFormat extends Format {
     }}
 
     /**
-     * Formats a bitcoin value as a number and possibly a units indicator and appends the
+     * Formats a ferritecoin value as a number and possibly a units indicator and appends the
      * resulting text to the given string buffer.  The type of monetary value argument can be
      * any one of any of the following classes: <code>{@link Coin}</code>,
      * <code>Integer</code>, <code>Long</code>, <code>BigInteger</code>,
      * <code>BigDecimal</code>.  Numeric types that can represent only an integer are interpreted
      * as that number of satoshis.  The value of a <code>BigDecimal</code> is interpreted as that
-     * number of bitcoins, rounded to the nearest satoshi as necessary.
+     * number of ferritecoins, rounded to the nearest satoshi as necessary.
      *
      * @return the <code>StringBuffer</code> passed in as <code>toAppendTo</code>
      */
@@ -1147,12 +1147,12 @@ public abstract class BtcFormat extends Format {
     }
 
     /**
-     * Formats a bitcoin value as a number and possibly a units indicator to a
+     * Formats a ferritecoin value as a number and possibly a units indicator to a
      * <code>String</code>.The type of monetary value argument can be any one of any of the
      * following classes: <code>{@link Coin}</code>, <code>Integer</code>, <code>Long</code>,
      * <code>BigInteger</code>, <code>BigDecimal</code>.  Numeric types that can represent only
      * an integer are interpreted as that number of satoshis.  The value of a
-     * <code>BigDecimal</code> is interpreted as that number of bitcoins, rounded to the
+     * <code>BigDecimal</code> is interpreted as that number of ferritecoins, rounded to the
      * nearest satoshi as necessary.
      *
      * @param minDecimals The minimum number of decimal places in the fractional part of the formatted number
@@ -1164,13 +1164,13 @@ public abstract class BtcFormat extends Format {
     }
 
     /**
-     * Formats a bitcoin value as a number and possibly a units indicator and appends the
+     * Formats a ferritecoin value as a number and possibly a units indicator and appends the
      * resulting text to the given string buffer.  The type of monetary value argument can be
      * any one of any of the following classes: <code>{@link Coin}</code>,
      * <code>Integer</code>, <code>Long</code>, <code>BigInteger</code>,
      * <code>BigDecimal</code>.  Numeric types that can represent only an integer are interpreted
      * as that number of satoshis.  The value of a <code>BigDecimal</code> is interpreted as that
-     * number of bitcoins, rounded to the nearest satoshi as necessary.
+     * number of ferritecoins, rounded to the nearest satoshi as necessary.
      *
      * @param minDecimals The minimum number of decimal places in the fractional part of the formatted number
      * @param fractionGroups The sizes of optional additional fractional decimal-place groups
@@ -1199,7 +1199,7 @@ public abstract class BtcFormat extends Format {
     /**
      * Return the denomination for formatting the given value.  The returned <code>int</code>
      * is the size of the decimal-place shift between the given Bitcoin-value denominated in
-     * bitcoins and that same value as formatted.  A fixed-denomination formatter will ignore
+     * ferritecoins and that same value as formatted.  A fixed-denomination formatter will ignore
      * the arguments.
      *
      * @param satoshis The number of satoshis having the value for which the shift is calculated
@@ -1215,7 +1215,7 @@ public abstract class BtcFormat extends Format {
     protected abstract int scale();
 
     /**
-     * Takes a bitcoin monetary value that the client wants to format and returns the number of
+     * Takes a ferritecoin monetary value that the client wants to format and returns the number of
      * denominational units having the equal value, rounded to the appropriate number of
      * decimal places.  Calls the scale() method of the subclass, which may have the
      * side-effect of changing the currency symbol and code of the underlying `NumberFormat`
@@ -1274,12 +1274,12 @@ public abstract class BtcFormat extends Format {
     }
 
     /**
-     * Takes an object representing a bitcoin quantity of any type the
+     * Takes an object representing a ferritecoin quantity of any type the
      * client is permitted to pass us, and return a BigInteger representing the
      * number of satoshis having the equivalent value. */
     private static BigInteger inSatoshis(Object qty) {
 	BigInteger satoshis;
-        // the value might be bitcoins or satoshis
+        // the value might be ferritecoins or satoshis
 	if (qty instanceof Long || qty instanceof Integer)
 	    satoshis = BigInteger.valueOf(((Number)qty).longValue());
 	else if (qty instanceof BigInteger)
@@ -1395,9 +1395,9 @@ public abstract class BtcFormat extends Format {
      * will be recognized, and the parsed number will be interpreted as a quantity of units
      * having that recognized denomination.
      * <p>If the pattern includes a currency sign but no currency sign is detected in the parsed
-     * String, then the number is interpreted as a quatity of bitcoins.
+     * String, then the number is interpreted as a quatity of ferritecoins.
      * <p>If the pattern contains neither a currency symbol nor sign, then instances of {@link
-     * BtcAutoFormat} will interpret the parsed number as a quantity of bitcoins, and instances
+     * BtcAutoFormat} will interpret the parsed number as a quantity of ferritecoins, and instances
      * of {@link BtcAutoFormat} will interpret the number as a quantity of that instance's
      * configured denomination, which can be ascertained by invoking the {@link
      * BtcFixedFormat#symbol()} or {@link BtcFixedFormat#code()} method.
@@ -1449,9 +1449,9 @@ public abstract class BtcFormat extends Format {
      * will be recognized, and the parsed number will be interpreted as a quantity of units
      * having that recognized denomination.
      * <p>If the pattern includes a currency sign but no currency sign is detected in the parsed
-     * String, then the number is interpreted as a quatity of bitcoins.
+     * String, then the number is interpreted as a quatity of ferritecoins.
      * <p>If the pattern contains neither a currency symbol nor sign, then instances of {@link
-     * BtcAutoFormat} will interpret the parsed number as a quantity of bitcoins, and instances
+     * BtcAutoFormat} will interpret the parsed number as a quantity of ferritecoins, and instances
      * of {@link BtcAutoFormat} will interpret the number as a quantity of that instance's
      * configured denomination, which can be ascertained by invoking the {@link
      * BtcFixedFormat#symbol()} or {@link BtcFixedFormat#code()} method.
@@ -1526,13 +1526,13 @@ public abstract class BtcFormat extends Format {
      */
     public static Locale[] getAvailableLocales() { return NumberFormat.getAvailableLocales(); }
 
-    /** Return the unprefixed currency symbol for bitcoins configured for this object.  The
+    /** Return the unprefixed currency symbol for ferritecoins configured for this object.  The
      *  return value of this method is constant throughough the life of an instance.  */
     public String coinSymbol() { synchronized(numberFormat) {
         return numberFormat.getDecimalFormatSymbols().getCurrencySymbol();
     }}
 
-    /** Return the unprefixed international currency code for bitcoins configured for this
+    /** Return the unprefixed international currency code for ferritecoins configured for this
      * object.  The return value of this method is constant throughough the life of an instance.  */
     public String coinCode() { synchronized(numberFormat) {
         return numberFormat.getDecimalFormatSymbols().getInternationalCurrencySymbol();
