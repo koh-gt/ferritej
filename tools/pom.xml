@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.ferritej</groupId>
     <artifactId>ferritej-parent</artifactId>
-    <version>0.14.2</version>
+    <version>1.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

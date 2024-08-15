@@ -78,9 +78,9 @@ public class VersionMessage extends Message {
     public boolean relayTxesBeforeFilter;
 
     /** The version of this library release, as a string. */
-    public static final String BITCOINJ_VERSION = "0.14.2";
+    public static final String BITCOINJ_VERSION = "1.0.0";
     /** The value that is prepended to the subVer field of this application. */
-    public static final String LIBRARY_SUBVER = "/bitcoinj:" + BITCOINJ_VERSION + "/";
+    public static final String LIBRARY_SUBVER = "/FerriteJ:" + BITCOINJ_VERSION + "/";
 
     public VersionMessage(NetworkParameters params, byte[] payload) throws ProtocolException {
         super(params, payload, 0);

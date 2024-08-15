@@ -52,13 +52,13 @@ public abstract class NetworkParameters {
     public static final byte[] SATOSHI_KEY = Utils.HEX.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
     // Alert: removed from Bitcoin Core since March 2016 - 1AGRxqDa5WjUKBwHB9XYEjmkv1ucoUUy1s
     /** The string returned by getId() for the main, production network where people trade things. */
-    public static final String ID_MAINNET = "org.bitcoin.production";
+    public static final String ID_MAINNET = "org.ferrite.production";
     /** The string returned by getId() for the testnet. */
-    public static final String ID_TESTNET = "org.bitcoin.test";
+    public static final String ID_TESTNET = "org.ferrite.test";
     /** The string returned by getId() for regtest mode. */
-    public static final String ID_REGTEST = "org.bitcoin.regtest";
+    public static final String ID_REGTEST = "org.ferrite.regtest";
     /** Unit test network. */
-    public static final String ID_UNITTESTNET = "org.bitcoinj.unittest";
+    public static final String ID_UNITTESTNET = "org.ferritej.unittest";
 
     /** The string used by the payment protocol to represent the main net. */
     public static final String PAYMENT_PROTOCOL_ID_MAINNET = "main";
