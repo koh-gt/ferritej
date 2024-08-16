@@ -58,7 +58,6 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         spendableCoinbaseDepth = 100;
 
 	powDGWHeight = 250000;
-        powKGWHeight = 250000;
         powAllowMinimumDifficulty = false;
         powNoRetargeting = false;
 

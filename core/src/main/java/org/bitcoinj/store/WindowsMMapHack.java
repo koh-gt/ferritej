@@ -31,7 +31,10 @@ import java.nio.*;
  */
 public class WindowsMMapHack {
     public static void forceRelease(MappedByteBuffer buffer) {
-        Cleaner cleaner = ((DirectBuffer) buffer).cleaner();
-        if (cleaner != null) cleaner.clean();
+        // Cleaner cleaner = ((DirectBuffer) buffer).cleaner();
+        // if (cleaner != null) cleaner.clean();
+	
+	// Setting buffer to null might allow GC to release JVM RAM resources.
+	buffer = null;
     }
 }

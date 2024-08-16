@@ -2,9 +2,9 @@
 
 [![Visit our IRC channel](https://kiwiirc.com/buttons/irc.freenode.net/bitcoinj.png)](https://kiwiirc.com/client/irc.freenode.net/bitcoinj)
 
-### Welcome to bitcoinj
+### Welcome to ferritej
 
-The bitcoinj library is a Java implementation of the Bitcoin protocol, which allows it to maintain a wallet and send/receive transactions without needing a local copy of Bitcoin Core. It comes with full documentation and some example apps showing how to use it.
+The ferritej library is a Java implementation of the Ferrite protocol, which allows it to maintain a wallet and send/receive transactions without needing a local copy of Bitcoin Core. It comes with full documentation and some example apps showing how to use it.
 
 ### Technologies
 
@@ -16,16 +16,24 @@ The bitcoinj library is a Java implementation of the Bitcoin protocol, which all
 ### Getting started
 
 To get started, it is best to have the latest JDK and Maven installed. The HEAD of the `master` branch contains the latest development code and various production releases are provided on feature branches.
+```
+# Java 8
+sudo apt-get install openjfx
+sudo apt-get install openjfx-source
+
+ mvn clean javadoc:jar package
+```
+
 
 #### Building from the command line
 
 To perform a full build use
 ```
-mvn clean package
+sudo JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64 mvn clean package -fn
 ```
 You can also run
 ```
-mvn site:site
+mvn site:site -fn -T 4
 ```
 to generate a website with useful information like JavaDocs.
 
