@@ -15,7 +15,7 @@
 package org.bitcoinj.store;
 
 import sun.misc.*;
-import sun.nio.ch.*;
+// import sun.nio.ch.*;
 
 import java.nio.*;
 

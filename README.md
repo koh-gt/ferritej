@@ -17,11 +17,16 @@ The ferritej library is a Java implementation of the Ferrite protocol, which all
 
 To get started, it is best to have the latest JDK and Maven installed. The HEAD of the `master` branch contains the latest development code and various production releases are provided on feature branches.
 ```
-# Java 8
-sudo apt-get install openjfx
-sudo apt-get install openjfx-source
+sudo apt-get install openjdk-8-jdk
+# Java 11 (version 54.0)
+sudo apt-get install openjdk-11-jdk
 
- mvn clean javadoc:jar package
+sudo apt-get update
+sudo apt-get install openjdk-11-doc
+
+# JAVA_HOME variable
+echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 
@@ -29,7 +34,7 @@ sudo apt-get install openjfx-source
 
 To perform a full build use
 ```
-sudo JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64 mvn clean package -fn
+sudo JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64 mvn clean package -fn
 ```
 You can also run
 ```
