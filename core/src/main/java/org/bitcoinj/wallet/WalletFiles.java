@@ -19,7 +19,7 @@ package org.bitcoinj.wallet;
 
 import org.bitcoinj.core.*;
 import org.bitcoinj.utils.*;
-import org.jcp.xml.dsig.internal.dom.Utils;
+//import org.jcp.xml.dsig.internal.dom.Utils;
 import org.slf4j.*;
 
 import com.google.common.base.Stopwatch;

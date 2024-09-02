@@ -29,6 +29,12 @@ echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64' >> ~/.bashrc
 source ~/.bashrc
 ```
 
+#### Known build issues
+Shading
+```
+rm -rf ferritej/core/src/test/java/org
+```
+
 
 #### Building from the command line
 
