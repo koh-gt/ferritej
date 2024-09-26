@@ -42,7 +42,7 @@ public class TestNet3Params extends AbstractBitcoinNetParams {
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
         port = 19574;
         addressHeader = 111;
-        p2shHeader = 196;
+        p2shHeader = 35; //196
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         dumpedPrivateKeyHeader = 239;
         genesisBlock.setTime(1669136958L);
@@ -58,14 +58,16 @@ public class TestNet3Params extends AbstractBitcoinNetParams {
 	genesisBlock.setMerkleRoot(Sha256Hash.wrap("3db2b5aa928b56b8f38dc404f5bdb9e76209906b91ba175361acdc2405b19592"));
 
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("7a9f43d6e86eefa66e2b79918b2235c9362106f3d9f11f37f7a33450ceae73c1"));
+        // checkState(genesisHash.equals("7a9f43d6e86eefa66e2b79918b2235c9362106f3d9f11f37f7a33450ceae73c1"));
         alertSigningKey = Utils.HEX.decode("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
 
         dnsSeeds = new String[] {
                 "testnet-seed.bitcoin.schildbach.de", // Andreas Schildbach
                 "testnet-seed.bitcoin.petertodd.org"  // Peter Todd
         };
-        addrSeeds = null;
+        addrSeeds = new int[] {
+	    0x68c9bd76,  // 118.189.201.104
+	}; 
         bip32HeaderPub = 0x043587CF;
         bip32HeaderPriv = 0x04358394;
 

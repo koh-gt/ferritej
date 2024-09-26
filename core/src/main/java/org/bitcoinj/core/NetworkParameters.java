@@ -119,8 +119,14 @@ public abstract class NetworkParameters {
             // A script containing the difficulty bits and the following message:
             //
             //   "ST 22Nov22 Singapore was second biggest user of FTX pre collapse"
-            byte[] bytes = Utils.HEX.decode
-                    ("04ffff001d01044053542032324e6f7632322053696e6761706f726520776173207365636f6e6420626967676573742075736572206f66204654582070726520636f6c6c61707365");
+            /* 
+            ??: 04       
+            version: f0ff0f1e 0104 
+            length:  40
+text:            53542032324e6f7632322053696e6761706f726520776173207365636f6e6420626967676573742075736572206f66204654582070726520636f6c6c61707365
+*/            
+// ("04ffff001d01044053542032324e6f7632322053696e6761706f726520776173207365636f6e6420626967676573742075736572206f66204654582070726520636f6c6c61707365");
+            byte[] bytes = Utils.HEX.decode ("04f0ff0f1e01044053542032324e6f7632322053696e6761706f726520776173207365636f6e6420626967676573742075736572206f66204654582070726520636f6c6c61707365");
             t.addInput(new TransactionInput(n, t, bytes));
             ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
             Script.writeBytes(scriptPubKeyBytes, Utils.HEX.decode
@@ -524,10 +530,10 @@ public abstract class NetworkParameters {
     public abstract int getProtocolVersionNum(final ProtocolVersion version);
 
     public static enum ProtocolVersion {
-        MINIMUM(30000),   // Minimum v3 after Ferrite DGWv3 DAA fork 
+        MINIMUM(31800),  
         PONG(60001),
         BLOOM_FILTER(70000),
-        CURRENT(30104);   // Latest is v3.1.4 as of 20240815 
+        CURRENT(70001);   // 70001 works better (alert issue), 70016 works, 30104 - lol
 
         private final int bitcoinProtocol;
 

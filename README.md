@@ -24,15 +24,18 @@ sudo apt-get install openjdk-11-jdk
 sudo apt-get update
 sudo apt-get install openjdk-11-doc
 
+# switch versions
+sudo update-alternatives --config java
+Java 8 for compiling the wallet jar
+Java 11 for the checkpoints
+cd tools
+chmod +x ./build-checkpoints
+./build-checkpoints --peer 127.0.0.1 --days=1  
+
+
 # JAVA_HOME variable
 echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64' >> ~/.bashrc
 source ~/.bashrc
-```
-
-#### Known build issues
-Shading
-```
-rm -rf ferritej/core/src/test/java/org
 ```
 
 

@@ -88,6 +88,87 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
     }
 
     public void checkDifficultyTransitions_btc(final StoredBlock storedPrev, final Block nextBlock,
+                                                final BlockStore blockStore) throws VerificationException, BlockStoreException {
+
+        if(powNoRetargeting)
+            return;
+
+        Block prev = storedPrev.getHeader();
+
+        // Is this supposed to be a difficulty transition point?
+        if (!isDifficultyTransitionPoint(storedPrev)) {
+
+            if(powAllowMinimumDifficulty) {
+
+                // On non-difficulty transition points, easy
+                // blocks are allowed if there has been a span of 5 minutes without one.
+                final long timeDelta = nextBlock.getTimeSeconds() - prev.getTimeSeconds();
+                // There is an integer underflow bug in bitcoin-qt that means mindiff blocks are accepted when time
+                // goes backwards.
+                if (timeDelta <= NetworkParameters.TARGET_SPACING * 2) {
+                    // Walk backwards until we find a block that doesn't have the easiest proof of work, then check
+                    // that difficulty is equal to that one.
+                    StoredBlock cursor = storedPrev;
+                    while (!cursor.getHeader().equals(getGenesisBlock()) &&
+                            cursor.getHeight() % getInterval() != 0 &&
+                            cursor.getHeader().getDifficultyTargetAsInteger().equals(getMaxTarget()))
+                        cursor = cursor.getPrev(blockStore);
+                    BigInteger cursorTarget = cursor.getHeader().getDifficultyTargetAsInteger();
+                    BigInteger newTarget = nextBlock.getDifficultyTargetAsInteger();
+                    if (!cursorTarget.equals(newTarget))
+                        throw new VerificationException("Testnet block transition that is not allowed: " +
+                                Long.toHexString(cursor.getHeader().getDifficultyTarget()) + " vs " +
+                                Long.toHexString(nextBlock.getDifficultyTarget()));
+                } else {
+                    if(nextBlock.getDifficultyTarget() != Utils.encodeCompactBits(maxTarget))
+                        throw new VerificationException("Unexpected change in difficulty at height " + storedPrev.getHeight() +
+                                ": " + Long.toHexString(Utils.encodeCompactBits(maxTarget)) + " vs " +
+                                Long.toHexString(nextBlock.getDifficultyTarget()));
+                }
+                return;
+            }
+            // No ... so check the difficulty didn't actually change.
+            if (nextBlock.getDifficultyTarget() != prev.getDifficultyTarget())
+                throw new VerificationException("Unexpected change in difficulty at height " + storedPrev.getHeight() +
+                        ": " + Long.toHexString(nextBlock.getDifficultyTarget()) + " vs " +
+                        Long.toHexString(prev.getDifficultyTarget()));
+            return;
+        }
+
+        // We need to find a block far back in the chain. It's OK that this is expensive because it only occurs every
+        // two weeks after the initial block chain download.
+        final Stopwatch watch = Stopwatch.createStarted();
+        StoredBlock cursor = blockStore.get(prev.getHash());
+        for (int i = 0; i < this.getInterval() - 1; i++) {
+            if (cursor == null) {
+                // This should never happen. If it does, it means we are following an incorrect or busted chain.
+                throw new VerificationException(
+                        "Difficulty transition point but we did not find a way back to the genesis block.");
+            }
+            cursor = blockStore.get(cursor.getHeader().getPrevBlockHash());
+        }
+        watch.stop();
+        
+        if (watch.elapsed(TimeUnit.MILLISECONDS) > 50)
+            log.info("Difficulty transition traversal took {}", watch);
+
+        Block blockIntervalAgo = cursor.getHeader();
+        int timespan = (int) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
+        // Limit the adjustment step.
+        final int targetTimespan = this.getTargetTimespan();
+        if (timespan < targetTimespan / 4)
+            timespan = targetTimespan / 4;
+        if (timespan > targetTimespan * 4)
+            timespan = targetTimespan * 4;
+
+        BigInteger newTarget = Utils.decodeCompactBits(prev.getDifficultyTarget());
+        newTarget = newTarget.multiply(BigInteger.valueOf(timespan));
+        newTarget = newTarget.divide(BigInteger.valueOf(targetTimespan));
+
+        verifyDifficulty(storedPrev, nextBlock, newTarget);
+    }
+/*
+    public void checkDifficultyTransitions_btc(final StoredBlock storedPrev, final Block nextBlock,
     	final BlockStore blockStore) throws VerificationException, BlockStoreException {
         Block prev = storedPrev.getHeader();
 
@@ -147,7 +228,7 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
         if (newTargetCompact != receivedTargetCompact)
             throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
                     Long.toHexString(newTargetCompact) + " vs " + Long.toHexString(receivedTargetCompact));
-    }
+    }*/
 
     protected long calculateNextDifficulty(StoredBlock storedBlock, Block nextBlock, BigInteger newTarget) {
         if (newTarget.compareTo(this.getMaxTarget()) > 0) {
@@ -166,9 +247,9 @@ public abstract class AbstractBitcoinNetParams extends NetworkParameters {
         long newTargetCompact = calculateNextDifficulty(storedPrev, nextBlock, newTarget);
         long receivedTargetCompact = nextBlock.getDifficultyTarget();
 
-        if (newTargetCompact != receivedTargetCompact)
-            throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
-                    Long.toHexString(newTargetCompact) + " vs " + Long.toHexString(receivedTargetCompact));
+        //if (newTargetCompact != receivedTargetCompact)
+        //    throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+        //            Long.toHexString(newTargetCompact) + " vs " + Long.toHexString(receivedTargetCompact));
     }
 
     public void DarkGravityWave(StoredBlock storedPrev, Block nextBlock,

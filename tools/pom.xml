@@ -40,7 +40,7 @@
               <artifactId>maven-shade-plugin</artifactId>
               <configuration>
                   <!-- Remove dead classes -->
-                  <minimizeJar>true</minimizeJar>
+                  <minimizeJar>false</minimizeJar>
                   <filters>
                       <filter>
                           <!-- exclude signatures, the bundling process breaks them for some reason -->

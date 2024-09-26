@@ -116,6 +116,7 @@ public class AlertMessage extends Message {
      */
     public boolean isSignatureValid() {
         return ECKey.verify(Sha256Hash.hashTwice(content), signature, params.getAlertSigningKey());
+        // return true;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

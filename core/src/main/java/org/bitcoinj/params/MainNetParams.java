@@ -36,10 +36,10 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
-        maxTarget = Utils.decodeCompactBits(0x1e00ffffL);
-        dumpedPrivateKeyHeader = 128 + 111;
+        maxTarget = Utils.decodeCompactBits(0x1e0fffffL); // 0x1e00ffff
+        dumpedPrivateKeyHeader = 128 + 35;
         addressHeader = 36;
-        p2shHeader = 5;
+        p2shHeader = 35; //5
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         port = 9574;
         packetMagic = 0x4a8210d9L;
@@ -50,9 +50,9 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         majorityRejectBlockOutdated = MAINNET_MAJORITY_REJECT_BLOCK_OUTDATED;
         majorityWindow = MAINNET_MAJORITY_WINDOW;
 
-        genesisBlock.setDifficultyTarget(0x1e00ffffL);
-        genesisBlock.setTime(1669136135L);
-        genesisBlock.setNonce(1766816);
+        genesisBlock.setDifficultyTarget(0x1e0ffff0L);
+        genesisBlock.setTime(1669136135L); // 637CFF07
+        genesisBlock.setNonce(1766816);    // 001AF5A0
         id = ID_MAINNET;
         subsidyDecreaseBlockCount = 301107;
         spendableCoinbaseDepth = 100;
@@ -87,15 +87,8 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         checkpoints.put(154000, Sha256Hash.wrap("e4925099992f4ca3337c9f85deb52b88da80a6ea40127adf2bc6c2851d5d49b2"));
         checkpoints.put(178000, Sha256Hash.wrap("d4f18be5a123aedbe1a091d0a0ae27412ff4acb4219e783f36391e6baac7fedb"));
 
-        dnsSeeds = new String[] {
-                "118.189.201.104",        
-                "38.242.145.73",         
-                "78.220.84.58", 
-                "133.177.197.167",       
-                "node1.ferritecoin.org",           
-		"node2.ferritecoin.org",           
-		"node3.ferritecoin.org",            
-		"node4.ferritecoin.org",           
+        dnsSeeds = new String[] {                 
+		"vps.ferritecoin.com",          
         };
         httpSeeds = null; /* new HttpDiscovery.Details[] {
                 // Andreas Schildbach
@@ -105,7 +98,13 @@ public class MainNetParams extends AbstractBitcoinNetParams {
                 )
         }; */
 
-        addrSeeds = null; /* new int[] {
+        addrSeeds = new int[] {
+	    0x68c9bd76,  // 118.189.201.104
+	    0x4991f226,  // 38.242.145.73
+	    0x3a54dc4e,  // 78.220.84.58
+	    0xa7c5b185,  // 133.177.197.167
+	}; 
+	/* new int[] {
                 0x1ddb1032, 0x6242ce40, 0x52d6a445, 0x2dd7a445, 0x8a53cd47, 0x73263750, 0xda23c257, 0xecd4ed57,
                 0x0a40ec59, 0x75dce160, 0x7df76791, 0x89370bad, 0xa4f214ad, 0x767700ae, 0x638b0418, 0x868a1018,
                 0xcd9f332e, 0x0129653e, 0xcc92dc3e, 0x96671640, 0x56487e40, 0x5b66f440, 0xb1d01f41, 0xf1dc6041,

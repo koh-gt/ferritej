@@ -23,6 +23,7 @@ import com.google.common.collect.*;
 import com.google.common.net.*;
 import com.google.common.primitives.*;
 import com.google.common.util.concurrent.*;
+
 import com.squareup.okhttp.*;
 import com.subgraph.orchid.*;
 import net.jcip.annotations.*;
@@ -166,7 +167,7 @@ public class PeerGroup implements TransactionBroadcaster {
     // peer can fetch them.
     private final PeerListener peerListener = new PeerListener();
 
-    private int minBroadcastConnections = 0;
+    private int minBroadcastConnections = 1;
     private final ScriptsChangeEventListener walletScriptEventListener = new ScriptsChangeEventListener() {
         @Override public void onScriptsChanged(Wallet wallet, List<Script> scripts, boolean isAddingScripts) {
             recalculateFastCatchupAndFilter(FilterRecalculateMode.SEND_IF_CHANGED);
@@ -285,7 +286,7 @@ public class PeerGroup implements TransactionBroadcaster {
     private volatile int vConnectTimeoutMillis = DEFAULT_CONNECT_TIMEOUT_MILLIS;
     
     /** Whether bloom filter support is enabled when using a non FullPrunedBlockchain*/
-    private volatile boolean vBloomFilteringEnabled = true;
+    private volatile boolean vBloomFilteringEnabled = false; // turn off in case peer died
 
     /** See {@link #PeerGroup(Context)} */
     public PeerGroup(NetworkParameters params) {
