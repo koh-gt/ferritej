@@ -42,7 +42,7 @@ public class TestNet3Params extends AbstractBitcoinNetParams {
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
         port = 19574;
         addressHeader = 111;
-        p2shHeader = 35; //196
+        p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         dumpedPrivateKeyHeader = 239;
         genesisBlock.setTime(1669136958L);

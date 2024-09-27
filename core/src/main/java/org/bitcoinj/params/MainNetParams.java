@@ -87,8 +87,10 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         checkpoints.put(154000, Sha256Hash.wrap("e4925099992f4ca3337c9f85deb52b88da80a6ea40127adf2bc6c2851d5d49b2"));
         checkpoints.put(178000, Sha256Hash.wrap("d4f18be5a123aedbe1a091d0a0ae27412ff4acb4219e783f36391e6baac7fedb"));
 
-        dnsSeeds = new String[] {                 
-		"vps.ferritecoin.com",          
+        dnsSeeds = new String[] {
+                "dnsseed.ferritecoin.com",                   
+		"vps.ferritecoin.com",     
+		"ferritecoin.com",        
         };
         httpSeeds = null; /* new HttpDiscovery.Details[] {
                 // Andreas Schildbach

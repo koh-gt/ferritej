@@ -149,8 +149,8 @@ public class BuildCheckpoints {
         store.close();
 
         // Sanity check the created files.
-        // sanityCheck(plainFile, checkpoints.size());
-        // sanityCheck(textFile, checkpoints.size());
+        sanityCheck(plainFile, checkpoints.size());
+        sanityCheck(textFile, checkpoints.size());
     }
 
     private static void writeBinaryCheckpoints(TreeMap<Integer, StoredBlock> checkpoints, File file) throws Exception {
