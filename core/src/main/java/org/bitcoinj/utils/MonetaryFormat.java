@@ -58,7 +58,7 @@ public final class MonetaryFormat {
     /** Currency code for base 1/1000 Bitcoin. */
     public static final String CODE_MBTC = "mFEC";
     /** Currency code for base 1/1000000 Bitcoin. */
-    public static final String CODE_UBTC = "µBTC";
+    public static final String CODE_UBTC = "µFEC";
 
     public static final int MAX_DECIMALS = 8;
 
