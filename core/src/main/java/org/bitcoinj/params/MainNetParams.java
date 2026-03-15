@@ -87,6 +87,11 @@ public class MainNetParams extends AbstractBitcoinNetParams {
         checkpoints.put(154000, Sha256Hash.wrap("e4925099992f4ca3337c9f85deb52b88da80a6ea40127adf2bc6c2851d5d49b2"));
         checkpoints.put(178000, Sha256Hash.wrap("d4f18be5a123aedbe1a091d0a0ae27412ff4acb4219e783f36391e6baac7fedb"));
         checkpoints.put(200000, Sha256Hash.wrap("f2ac05fbd6974e9292ca462368a15bbb1818a442c2f5e72a4035165f3ae9ea01"));
+        checkpoints.put(250000, Sha256Hash.wrap("f97a363109259eb6912e984df81c5106276cd16907b1d2d721e8a1d6d55dc1f1"));
+        checkpoints.put(301107, Sha256Hash.wrap("3320a129b2e2eb8770a8d71efb9bdba09b20e313a2a92e121146eb323dbe8419"));
+        checkpoints.put(450000, Sha256Hash.wrap("3fed4270c7fdae13403707a82c4e7ad0bc9d5dec1e4d277ed2e2bf3dc14002b9"));
+        checkpoints.put(602214, Sha256Hash.wrap("2399672fc2e4303198f56734ccfe43202e0657de61a92141343f4c16e05e05f1"));
+        checkpoints.put(789000, Sha256Hash.wrap("fe124f6501f0df3d12486ca8a2494584a1b05005e40188eec9b4cd1dbb896dc7"));
 
         dnsSeeds = new String[] {                 
 		"vps.ferritecoin.com",            
@@ -104,6 +109,7 @@ public class MainNetParams extends AbstractBitcoinNetParams {
 	    0x4991f226,  // 38.242.145.73
 	    0x3a54dc4e,  // 78.220.84.58
 	    0xa7c5b185,  // 133.177.197.167
+		0x76bdc968,
 	}; 
 	/* new int[] {
                 0x1ddb1032, 0x6242ce40, 0x52d6a445, 0x2dd7a445, 0x8a53cd47, 0x73263750, 0xda23c257, 0xecd4ed57,
